@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${CURRENT_SERVICE}
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${CURRENT_SERVICE}
+spec:
+  selector:
+    matchLabels:
+      app: ${CURRENT_SERVICE}
+      tier: ${SERVICE_TYPE}
+  template:
+    metadata:
+      labels:
+        app: ${CURRENT_SERVICE}
+        tier: ${SERVICE_TYPE}
+    spec:
+      containers:
+        - name: ${CURRENT_SERVICE}
+          image: ${AWS_USER_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${CODENAME}/${NAMESPACE}/${CURRENT_SERVICE}:${TAG}
+          envFrom:
+            - secretRef:
+                name: balue
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3333
+          resources:
+            requests:
+              cpu: 50m
+            limits:
+              memory: 512Mi
+              cpu: 500m
